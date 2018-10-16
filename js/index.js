@@ -17,7 +17,7 @@ var benfordChart = new Chart(benfordCanvas, {
         },
         {
             label: 'Benford',
-            data: benfordValues,
+            data: benfordValues.map(function (x) { return x * 100; }),
             borderColor: '#007bff',
             borderWidth: 2,
             backgroundColor: 'transparent',
@@ -26,7 +26,11 @@ var benfordChart = new Chart(benfordCanvas, {
 });
 
 function updateChart() {
-    var data = textData.value.split(',');
+    var data = textData.value.split(',')
+        .map(function (x) { return x.trim(); })
+        .filter(function (x) {
+            return /(^[1-9])/g.test(x);
+        });
     var results = {};
     labels.forEach(function (x) {
         results[x] = 0;
@@ -38,7 +42,7 @@ function updateChart() {
         }
     });
     benfordChart.data.datasets[0].data = Object.keys(results).map(function (x) {
-        return results[x] / data.length;
+        return (results[x] / data.length).toFixed(3) * 100;
     });
     benfordChart.update();
 }
